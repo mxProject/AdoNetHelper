@@ -14,6 +14,8 @@
     <PackageProjectUrl>https://github.com/mxProject/AdoNetHelper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mxProject/AdoNetHelper</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Title></Title>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
 </Project>
