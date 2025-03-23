@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>10</LangVersion>
+    <Nullable>enable</Nullable>
+    <RootNamespace>mxProject</RootNamespace>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Version>0.1.0</Version>
+    <Authors>mxProject</Authors>
+    <Description>ADO.NET Helper Library.</Description>
+    <Copyright>Copyright (c) mxProject 2025</Copyright>
+    <PackageTags>ADO.NET</PackageTags>
+    <PackageProjectUrl>https://github.com/mxProject/AdoNetHelper</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mxProject/AdoNetHelper</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Title></Title>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+</Project>
