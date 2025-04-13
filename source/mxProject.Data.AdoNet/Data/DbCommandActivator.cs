@@ -15,24 +15,29 @@ namespace mxProject.Data
         /// </summary>
         /// <param name="connection">The connection.</param>
         /// <param name="transaction">The transaction.</param>
-        internal DbCommandActivator(IDbConnection connection, IDbTransaction? transaction = null)
+        /// <param name="configureCommand">A method to configure a command before execution.</param>
+        internal DbCommandActivator(IDbConnection connection, IDbTransaction? transaction = null, Action<IDbCommand>? configureCommand = null)
         {
             m_Connection = connection;
             m_Transaction = transaction;
+            m_ConfigureCommand = configureCommand;
         }
 
         /// <summary>
         /// Creates a new instance.
         /// </summary>
         /// <param name="transaction">The transaction.</param>
-        internal DbCommandActivator(IDbTransaction transaction)
+        /// <param name="configureCommand">A method to configure a command before execution.</param>
+        internal DbCommandActivator(IDbTransaction transaction, Action<IDbCommand>? configureCommand = null)
         {
             m_Connection = null;
             m_Transaction = transaction;
+            m_ConfigureCommand = configureCommand;
         }
 
         private readonly IDbConnection? m_Connection;
         private readonly IDbTransaction? m_Transaction;
+        private readonly Action<IDbCommand>? m_ConfigureCommand;
 
         /// <summary>
         /// Creates a new command.
@@ -55,6 +60,11 @@ namespace mxProject.Data
             if (m_Transaction != null)
             {
                 command.Transaction = m_Transaction;
+            }
+
+            if (m_ConfigureCommand != null)
+            {
+                m_ConfigureCommand(command);
             }
 
             return command;

@@ -14,15 +14,30 @@ namespace mxProject.Data
         /// <summary>
         /// Creates a new instance.
         /// </summary>
-        /// <param name="connectionActivator">The method to activate a connection.</param>
+        /// <param name="connectionActivator">A method to activate a connection.</param>
         /// <param name="useTransactionScope">A value that indicates whether to use ambient transactions using TransactionScope.</param>
         public DbCommandExecutor(Func<IDbConnection> connectionActivator, bool useTransactionScope)
         {
             m_ConnectionActivator = connectionActivator;
             UseTransactionScope = useTransactionScope;
+            m_ConfigureCommand = null;
+        }
+
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
+        /// <param name="connectionActivator">A method to activate a connection.</param>
+        /// <param name="useTransactionScope">A value that indicates whether to use ambient transactions using TransactionScope.</param>
+        /// <param name="configureCommand">A method to configure a command before execution.</param>
+        public DbCommandExecutor(Func<IDbConnection> connectionActivator, bool useTransactionScope, Action<IDbCommand> configureCommand)
+        {
+            m_ConnectionActivator = connectionActivator;
+            UseTransactionScope = useTransactionScope;
+            m_ConfigureCommand = configureCommand;
         }
 
         private readonly Func<IDbConnection> m_ConnectionActivator;
+        private readonly Action<IDbCommand>? m_ConfigureCommand;
 
         #region TransactionScope
 
@@ -57,13 +72,13 @@ namespace mxProject.Data
             if (UseTransactionScope && ExistsActiveTransactionScope())
             {
                 // Use ambient transaction.
-                action(new DbCommandActivator(connection).CreateCommand);
+                action(new DbCommandActivator(connection, configureCommand: m_ConfigureCommand).CreateCommand);
             }
             else
             {
                 using var transaction = connection.BeginTransaction();
 
-                action(new DbCommandActivator(connection, transaction).CreateCommand);
+                action(new DbCommandActivator(connection, transaction, m_ConfigureCommand).CreateCommand);
 
                 transaction.Commit();
             }
@@ -84,13 +99,13 @@ namespace mxProject.Data
             if (UseTransactionScope && ExistsActiveTransactionScope())
             {
                 // Use ambient transaction.
-                return func(new DbCommandActivator(connection).CreateCommand);
+                return func(new DbCommandActivator(connection, configureCommand: m_ConfigureCommand).CreateCommand);
             }
             else
             {
                 using var transaction = connection.BeginTransaction();
 
-                var result = func(new DbCommandActivator(connection, transaction).CreateCommand);
+                var result = func(new DbCommandActivator(connection, transaction, m_ConfigureCommand).CreateCommand);
 
                 transaction.Commit();
 
@@ -113,7 +128,7 @@ namespace mxProject.Data
             if (UseTransactionScope && ExistsActiveTransactionScope())
             {
                 // Use ambient transaction.
-                foreach (var result in func(new DbCommandActivator(connection).CreateCommand))
+                foreach (var result in func(new DbCommandActivator(connection, configureCommand: m_ConfigureCommand).CreateCommand))
                 {
                     yield return result;
                 }
@@ -122,7 +137,7 @@ namespace mxProject.Data
             {
                 using var transaction = connection.BeginTransaction();
 
-                foreach(var result in func(new DbCommandActivator(connection, transaction).CreateCommand))
+                foreach(var result in func(new DbCommandActivator(connection, transaction, m_ConfigureCommand).CreateCommand))
                 {
                     yield return result;
                 }
@@ -146,13 +161,13 @@ namespace mxProject.Data
             if (UseTransactionScope && ExistsActiveTransactionScope())
             {
                 // Use ambient transaction.
-                action(state, new DbCommandActivator(connection).CreateCommand);
+                action(state, new DbCommandActivator(connection, configureCommand: m_ConfigureCommand).CreateCommand);
             }
             else
             {
                 using var transaction = connection.BeginTransaction();
 
-                action(state, new DbCommandActivator(connection, transaction).CreateCommand);
+                action(state, new DbCommandActivator(connection, transaction, m_ConfigureCommand).CreateCommand);
 
                 transaction.Commit();
             }
@@ -175,13 +190,13 @@ namespace mxProject.Data
             if (UseTransactionScope && ExistsActiveTransactionScope())
             {
                 // Use ambient transaction.
-                return func(state, new DbCommandActivator(connection).CreateCommand);
+                return func(state, new DbCommandActivator(connection, configureCommand: m_ConfigureCommand).CreateCommand);
             }
             else
             {
                 using var transaction = connection.BeginTransaction();
 
-                var result = func(state, new DbCommandActivator(connection, transaction).CreateCommand);
+                var result = func(state, new DbCommandActivator(connection, transaction, m_ConfigureCommand).CreateCommand);
 
                 transaction.Commit();
 
@@ -206,7 +221,7 @@ namespace mxProject.Data
             if (UseTransactionScope && ExistsActiveTransactionScope())
             {
                 // Use ambient transaction.
-                foreach (var result in func(state, new DbCommandActivator(connection).CreateCommand))
+                foreach (var result in func(state, new DbCommandActivator(connection, configureCommand: m_ConfigureCommand).CreateCommand))
                 {
                     yield return result;
                 }
@@ -215,7 +230,7 @@ namespace mxProject.Data
             {
                 using var transaction = connection.BeginTransaction();
 
-                foreach (var result in func(state, new DbCommandActivator(connection, transaction).CreateCommand))
+                foreach (var result in func(state, new DbCommandActivator(connection, transaction, m_ConfigureCommand).CreateCommand))
                 {
                     yield return result;
                 }
@@ -235,7 +250,7 @@ namespace mxProject.Data
         /// <param name="action">The action.</param>
         public void ExecuteOnConnection(IDbConnection connection, Action<Func<IDbCommand>> action)
         {
-            action(new DbCommandActivator(connection).CreateCommand);
+            action(new DbCommandActivator(connection, configureCommand: m_ConfigureCommand).CreateCommand);
         }
 
         /// <summary>
@@ -247,7 +262,7 @@ namespace mxProject.Data
         /// <returns>The result of the function.</returns>
         public TResult ExecuteOnConnection<TResult>(IDbConnection connection, Func<Func<IDbCommand>, TResult> func)
         {
-            return func(new DbCommandActivator(connection).CreateCommand);
+            return func(new DbCommandActivator(connection, configureCommand: m_ConfigureCommand).CreateCommand);
         }
 
         /// <summary>
@@ -259,7 +274,7 @@ namespace mxProject.Data
         /// <param name="action">The action.</param>
         public void ExecuteOnConnection<TState>(TState state, IDbConnection connection, Action<TState, Func<IDbCommand>> action)
         {
-            action(state, new DbCommandActivator(connection).CreateCommand);
+            action(state, new DbCommandActivator(connection, configureCommand: m_ConfigureCommand).CreateCommand);
         }
 
         /// <summary>
@@ -273,7 +288,7 @@ namespace mxProject.Data
         /// <returns>The result of the function.</returns>
         public TResult ExecuteOnConnection<TState, TResult>(TState state, IDbConnection connection, Func<TState, Func<IDbCommand>, TResult> func)
         {
-            return func(state, new DbCommandActivator(connection).CreateCommand);
+            return func(state, new DbCommandActivator(connection, configureCommand: m_ConfigureCommand).CreateCommand);
         }
 
         #endregion
@@ -287,7 +302,7 @@ namespace mxProject.Data
         /// <param name="action">The action.</param>
         public void ExecuteOnTransaction(IDbTransaction transaction, Action<Func<IDbCommand>> action)
         {
-            action(new DbCommandActivator(transaction).CreateCommand);
+            action(new DbCommandActivator(transaction, m_ConfigureCommand).CreateCommand);
         }
 
         /// <summary>
@@ -299,7 +314,7 @@ namespace mxProject.Data
         /// <returns>The result of the function.</returns>
         public TResult ExecuteOnTransaction<TResult>(IDbTransaction transaction, Func<Func<IDbCommand>, TResult> func)
         {
-            return func(new DbCommandActivator(transaction).CreateCommand);
+            return func(new DbCommandActivator(transaction, m_ConfigureCommand).CreateCommand);
         }
 
         /// <summary>
@@ -311,7 +326,7 @@ namespace mxProject.Data
         /// <param name="action">The action.</param>
         public void ExecuteOnTransaction<TState>(TState state, IDbTransaction transaction, Action<TState, Func<IDbCommand>> action)
         {
-            action(state, new DbCommandActivator(transaction).CreateCommand);
+            action(state, new DbCommandActivator(transaction, m_ConfigureCommand).CreateCommand);
         }
 
         /// <summary>
@@ -325,7 +340,7 @@ namespace mxProject.Data
         /// <returns>The result of the function.</returns>
         public TResult ExecuteOnTransaction<TState, TResult>(TState state, IDbTransaction transaction, Func<TState, Func<IDbCommand>, TResult> func)
         {
-            return func(state, new DbCommandActivator(transaction).CreateCommand);
+            return func(state, new DbCommandActivator(transaction, m_ConfigureCommand).CreateCommand);
         }
 
         #endregion
