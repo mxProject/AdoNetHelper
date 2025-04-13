@@ -28,7 +28,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteIteratorOnNewConnection_TransactionScope()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             int recordCount = 0;
 
@@ -69,7 +69,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteIteratorOnNewConnection_State_TransactionScope()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             int recordCount = 0;
 
@@ -114,7 +114,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteIteratorOnNewConnection_GetRecords()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             var records = executor.ExecuteIteratorOnNewConnection(GetRecords);
 
@@ -135,7 +135,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteIteratorOnNewConnection_State_GetRecords()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             var records = executor.ExecuteIteratorOnNewConnection(this, (@this, commandActivator) => @this.GetRecords(commandActivator));
 
@@ -156,7 +156,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnNewConnection_GetRecords()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             Assert.Throws<InvalidOperationException>(() =>
             {
@@ -180,7 +180,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnNewConnection_State_GetRecords()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             Assert.Throws<InvalidOperationException>(() =>
             {
@@ -204,7 +204,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnNewConnection_GetCount()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             var count = executor.ExecuteOnNewConnection(GetCount);
 
@@ -219,7 +219,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnNewConnection_State_GetCount()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             var count = executor.ExecuteOnNewConnection(this, (@this, commandActivator) => @this.GetCount(commandActivator));
 
@@ -234,7 +234,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnNewConnection_Insert()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             Assert.Throws<SqlException>(() =>
             {
@@ -253,7 +253,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnNewConnection_State_Insert()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             Assert.Throws<SqlException>(() =>
             {
@@ -276,7 +276,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnConnection_GetRecords()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             using var connection = SampleDatabase.CreateConnection();
 
@@ -301,7 +301,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnConnection_State_GetRecords()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             using var connection = SampleDatabase.CreateConnection();
 
@@ -326,7 +326,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnConnection_GetCount()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             using var connection = SampleDatabase.CreateConnection();
 
@@ -345,7 +345,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnConnection_State_GetCount()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             using var connection = SampleDatabase.CreateConnection();
 
@@ -364,7 +364,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnConnection_Insert()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             using var connection = SampleDatabase.CreateConnection();
 
@@ -394,7 +394,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnConnection_State_Insert()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             using var connection = SampleDatabase.CreateConnection();
 
@@ -428,7 +428,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnTransaction_GetRecords()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             using var connection = SampleDatabase.CreateConnection();
 
@@ -455,7 +455,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnTransaction_State_GetRecords()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             using var connection = SampleDatabase.CreateConnection();
 
@@ -482,7 +482,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnTransaction_GetCount()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             using var connection = SampleDatabase.CreateConnection();
 
@@ -503,7 +503,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnTransaction_State_GetCount()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             using var connection = SampleDatabase.CreateConnection();
 
@@ -524,7 +524,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnTransaction_Insert()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             using var connection = SampleDatabase.CreateConnection();
 
@@ -556,7 +556,7 @@ namespace Test.Data.AdoNet
         [Fact]
         public void ExecuteOnTransaction_State_Insert()
         {
-            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true);
+            var executor = new DbCommandExecutor(SampleDatabase.CreateConnection, true, ConfigureCommand);
 
             using var connection = SampleDatabase.CreateConnection();
 
@@ -585,6 +585,15 @@ namespace Test.Data.AdoNet
         #endregion
 
         /// <summary>
+        /// Configure the command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        private void ConfigureCommand(IDbCommand command)
+        {
+            command.CommandTimeout = 60;
+        }
+
+        /// <summary>
         /// Gets records from the database.
         /// </summary>
         /// <param name="commandActivator">The command activator.</param>
@@ -592,6 +601,8 @@ namespace Test.Data.AdoNet
         private IEnumerable<IDataRecord> GetRecords(Func<IDbCommand> commandActivator)
         {
             using var command = commandActivator();
+
+            Assert.Equal(60, command.CommandTimeout);
 
             command.CommandText = "select * from SAMPLE_TABLE";
 
@@ -613,6 +624,8 @@ namespace Test.Data.AdoNet
         {
             using var command = commandActivator();
 
+            Assert.Equal(60, command.CommandTimeout);
+
             command.CommandText = "select count(*) from SAMPLE_TABLE";
 
             return (int)command.ExecuteScalar()!;
@@ -626,6 +639,8 @@ namespace Test.Data.AdoNet
         {
             using var command = commandActivator();
 
+            Assert.Equal(60, command.CommandTimeout);
+
             command.CommandText = "insert into SAMPLE_TABLE values (6, 'Name6')";
 
             command.ExecuteNonQuery();
@@ -638,6 +653,8 @@ namespace Test.Data.AdoNet
         private void InsertFailed(Func<IDbCommand> commandActivator)
         {
             using var command = commandActivator();
+
+            Assert.Equal(60, command.CommandTimeout);
 
             command.CommandText = "insert into SAMPLE_TABLE values (6, 'Name6')";
 
@@ -654,6 +671,8 @@ namespace Test.Data.AdoNet
         private void Delete(Func<IDbCommand> commandActivator)
         {
             using var command = commandActivator();
+
+            Assert.Equal(60, command.CommandTimeout);
 
             command.CommandText = "delete from SAMPLE_TABLE where ID = 6";
 
