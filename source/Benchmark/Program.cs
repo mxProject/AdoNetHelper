@@ -2,4 +2,4 @@
 
 using BenchmarkDotNet.Running;
 
-var summary = BenchmarkRunner.Run<ConsoleApp1.DbFilter>();
+var summary = BenchmarkRunner.Run<Benchmark.DbFilter>();
