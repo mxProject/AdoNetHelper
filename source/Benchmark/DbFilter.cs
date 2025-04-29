@@ -290,18 +290,43 @@ namespace Benchmark
             Execute(connection);
         }
 
-        /// <summary>
-        /// Benchmarks a connection created using the factory with four filters.
-        /// </summary>
-        [Benchmark]
-        public void With4FilterUsingFactory()
-        {
-            using var connection = s_ConnectionFactory.CreateConnection();
+        private static readonly DbConnectionFactory s_ConnectionFactoryWith0Filter = new(
+            CreateConnection,
+            CreateConnectionFilters(0),
+            CreateTransactionFilters(0),
+            CreateCommandFilters(0),
+            CreateParametersFilters(0),
+            CreateDataReaderFilters(0)
+            );
 
-            Execute(connection);
-        }
+        private static readonly DbConnectionFactory s_ConnectionFactoryWith1Filter = new(
+            CreateConnection,
+            CreateConnectionFilters(1),
+            CreateTransactionFilters(1),
+            CreateCommandFilters(1),
+            CreateParametersFilters(1),
+            CreateDataReaderFilters(1)
+            );
 
-        private static readonly DbConnectionFactory s_ConnectionFactory = new(
+        private static readonly DbConnectionFactory s_ConnectionFactoryWith2Filter = new(
+            CreateConnection,
+            CreateConnectionFilters(2),
+            CreateTransactionFilters(2),
+            CreateCommandFilters(2),
+            CreateParametersFilters(2),
+            CreateDataReaderFilters(2)
+            );
+
+        private static readonly DbConnectionFactory s_ConnectionFactoryWith3Filter = new(
+            CreateConnection,
+            CreateConnectionFilters(3),
+            CreateTransactionFilters(3),
+            CreateCommandFilters(3),
+            CreateParametersFilters(3),
+            CreateDataReaderFilters(3)
+            );
+
+        private static readonly DbConnectionFactory s_ConnectionFactoryWith4Filter = new(
             CreateConnection,
             CreateConnectionFilters(4),
             CreateTransactionFilters(4),
@@ -310,6 +335,129 @@ namespace Benchmark
             CreateDataReaderFilters(4)
             );
 
+        /// <summary>
+        /// Benchmarks a connection created using the factory with four filters.
+        /// </summary>
+        [Benchmark]
+        public void With0FilterUsingFactory()
+        {
+            using var connection = s_ConnectionFactoryWith0Filter.CreateConnection();
+
+            Execute(connection);
+        }
+
+        /// <summary>
+        /// Benchmarks a connection created using the factory with four filters.
+        /// </summary>
+        [Benchmark]
+        public void With1FilterUsingFactory()
+        {
+            using var connection = s_ConnectionFactoryWith1Filter.CreateConnection();
+
+            Execute(connection);
+        }
+
+        /// <summary>
+        /// Benchmarks a connection created using the factory with four filters.
+        /// </summary>
+        [Benchmark]
+        public void With2FilterUsingFactory()
+        {
+            using var connection = s_ConnectionFactoryWith2Filter.CreateConnection();
+
+            Execute(connection);
+        }
+
+        /// <summary>
+        /// Benchmarks a connection created using the factory with four filters.
+        /// </summary>
+        [Benchmark]
+        public void With3FilterUsingFactory()
+        {
+            using var connection = s_ConnectionFactoryWith3Filter.CreateConnection();
+
+            Execute(connection);
+        }
+
+        /// <summary>
+        /// Benchmarks a connection created using the factory with four filters.
+        /// </summary>
+        [Benchmark]
+        public void With4FilterUsingFactory()
+        {
+            using var connection = s_ConnectionFactoryWith4Filter.CreateConnection();
+
+            Execute(connection);
+        }
+
+        #region Recursive
+
+        ///// <summary>
+        ///// Benchmarks a connection created using the factory with four filters.
+        ///// </summary>
+        //[Benchmark]
+        //public void With0FilterUsingFactoryRecursive()
+        //{
+        //    FilterUtility.Algorithm = FilterAlgorithms.Recursive;
+
+        //    using var connection = s_ConnectionFactoryWith0Filter.CreateConnection();
+
+        //    Execute(connection);
+        //}
+
+        ///// <summary>
+        ///// Benchmarks a connection created using the factory with four filters.
+        ///// </summary>
+        //[Benchmark]
+        //public void With1FilterUsingFactoryRecursive()
+        //{
+        //    FilterUtility.Algorithm = FilterAlgorithms.Recursive;
+
+        //    using var connection = s_ConnectionFactoryWith1Filter.CreateConnection();
+
+        //    Execute(connection);
+        //}
+
+        ///// <summary>
+        ///// Benchmarks a connection created using the factory with four filters.
+        ///// </summary>
+        //[Benchmark]
+        //public void With2FilterUsingFactoryRecursive()
+        //{
+        //    FilterUtility.Algorithm = FilterAlgorithms.Recursive;
+
+        //    using var connection = s_ConnectionFactoryWith2Filter.CreateConnection();
+
+        //    Execute(connection);
+        //}
+
+        ///// <summary>
+        ///// Benchmarks a connection created using the factory with four filters.
+        ///// </summary>
+        //[Benchmark]
+        //public void With3FilterUsingFactoryRecursive()
+        //{
+        //    FilterUtility.Algorithm = FilterAlgorithms.Recursive;
+
+        //    using var connection = s_ConnectionFactoryWith3Filter.CreateConnection();
+
+        //    Execute(connection);
+        //}
+
+        ///// <summary>
+        ///// Benchmarks a connection created using the factory with four filters.
+        ///// </summary>
+        //[Benchmark]
+        //public void With4FilterUsingFactoryRecursive()
+        //{
+        //    FilterUtility.Algorithm = FilterAlgorithms.Recursive;
+
+        //    using var connection = s_ConnectionFactoryWith4Filter.CreateConnection();
+
+        //    Execute(connection);
+        //}
+
+        #endregion
 
         /// <summary>
         /// Executes a sample database operation.

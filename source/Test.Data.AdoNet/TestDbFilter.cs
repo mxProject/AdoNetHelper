@@ -355,8 +355,9 @@ namespace Test.Data.AdoNet
             var transactionFilters = CreateTransactionFilters(settings.FilterCount, settings.TransactionFilterTargets);
             var commandFilters = CreateCommandFilters(settings.FilterCount, settings.CommandFilterTargets);
             var parametersFilters = CreateParametersFilters(settings.FilterCount, settings.ParametersFilterTargets);
+            var readerFilters = CreateDataReaderFilters(settings.FilterCount, settings.DataReaderFilterTargets);    
 
-            using var connection = SampleDatabase.CreateConnection().WithFilter(connectionFilters, transactionFilters, commandFilters, parametersFilters);
+            using var connection = SampleDatabase.CreateConnection().WithFilter(connectionFilters, transactionFilters, commandFilters, parametersFilters, readerFilters);
 
             m_OutputHelper.WriteLine("connection.OpenAsync");
             await connection.OpenAsync();
