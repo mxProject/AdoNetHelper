@@ -9,7 +9,7 @@ namespace mxProject.Data.Wrappers
     /// <summary>
     /// Represents a database transaction with additional filtering capabilities.
     /// </summary>
-    internal sealed class DbTransactionWithFilter : IDbTransaction
+    internal sealed class DbTransactionWithFilter : IDbTransaction, IDbTransactionWrapper
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DbTransactionWithFilter"/> class.
@@ -40,6 +40,8 @@ namespace mxProject.Data.Wrappers
         /// Gets the underlying database transaction.
         /// </summary>
         internal IDbTransaction WrappedTransaction { get; }
+
+        IDbTransaction IDbTransactionWrapper.WrappedTransaction => WrappedTransaction;
 
         #endregion
 

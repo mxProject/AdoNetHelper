@@ -159,22 +159,40 @@ namespace mxProject.Data.Extensions
 
         #endregion
 
-        #region Configure
+        #region Cast
 
         /// <summary>
-        /// Configures the connection by applying the specified action.
+        /// Casts the current connection to the specified type and performs the specified action.
         /// </summary>
-        /// <typeparam name="TConnection">The type of the connection.</typeparam>
+        /// <typeparam name="TConnection">The type to cast the connection to.</typeparam>
         /// <param name="this">The database connection.</param>
-        /// <param name="configure">The action to apply to the connection.</param>
-        /// <exception cref="InvalidOperationException">Thrown if the connection is not of the specified type.</exception>
-        public static void Configure<TConnection>(this IDbConnection @this, Action<TConnection> configure) where TConnection : IDbConnection
+        /// <param name="action">The action to perform on the casted connection.</param>
+        /// <exception cref="InvalidCastException">Thrown if the connection cannot be cast to the specified type.</exception>
+        public static void Cast<TConnection>(this IDbConnection @this, Action<TConnection> action) where TConnection : IDbConnection
         {
             var connection = @this.Find<TConnection>();
 
-            if (connection == null) { throw new InvalidOperationException($"The connection is not of type {typeof(TConnection).Name}."); }
+            if (connection == null) { throw new InvalidCastException($"The connection is not of type {typeof(TConnection).Name}."); }
 
-            configure(connection);
+            action(connection);
+        }
+
+        /// <summary>
+        /// Casts the current connection to the specified type and applies the specified function.
+        /// </summary>
+        /// <typeparam name="TConnection">The type to cast the connection to.</typeparam>
+        /// <typeparam name="TResult">The type of the result returned by the function.</typeparam>
+        /// <param name="this">The database connection.</param>
+        /// <param name="func">The function to apply to the casted connection.</param>
+        /// <returns>The result of the function applied to the casted connection.</returns>
+        /// <exception cref="InvalidCastException">Thrown if the connection cannot be cast to the specified type.</exception>
+        public static TResult Cast<TConnection, TResult>(this IDbConnection @this, Func<TConnection, TResult> func) where TConnection : IDbConnection
+        {
+            var connection = @this.Find<TConnection>();
+
+            if (connection == null) { throw new InvalidCastException($"The connection is not of type {typeof(TConnection).Name}."); }
+
+            return func(connection);
         }
 
         /// <summary>
@@ -190,7 +208,7 @@ namespace mxProject.Data.Extensions
                 return connection;
             }
 
-            if (@this is Wrappers.DbConnectionWithFilter wrapper)
+            if (@this is IDbConnectionWrapper wrapper)
             {
                 return wrapper.WrappedConnection.Find<TConnection>();
             }

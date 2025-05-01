@@ -1,17 +1,16 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.Data.Sqlite;
-using Npgsql;
-using Oracle.ManagedDataAccess.Client;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
 using System.Data.OleDb;
+using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
+using Npgsql;
+using Oracle.ManagedDataAccess.Client;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using mxProject.Data.Extensions;
-using Newtonsoft.Json.Linq;
 using Xunit.Abstractions;
 
 namespace Test.Data.AdoNet
@@ -581,6 +580,21 @@ namespace Test.Data.AdoNet
             {
                    typeof(OracleCommand)
             };
+        }
+
+        [Fact]
+        public void Cast()
+        {
+            using var connection = SampleDatabase.CreateConnection();
+
+            using var command = connection.CreateCommand();
+
+            var (_, param1) = command.AddBooleanParameter("param1", true);
+
+            param1.Cast <SqlParameter>(x =>
+            {
+                x.ForceColumnEncryption = true;
+            });
         }
     }
 }

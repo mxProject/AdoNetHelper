@@ -70,23 +70,41 @@ namespace mxProject.Data.Extensions
 
         #endregion
 
-        #region Configure
+        #region Cast
 
-        ///// <summary>
-        ///// Configures the transaction by applying the specified action.
-        ///// </summary>
-        ///// <typeparam name="TTransaction">The type of the transaction.</typeparam>
-        ///// <param name="this">The database transaction.</param>
-        ///// <param name="configure">The action to apply to the transaction.</param>
-        ///// <exception cref="InvalidOperationException">Thrown if the transaction is not of the specified type.</exception>
-        //public static void Configure<TTransaction>(this IDbTransaction @this, Action<TTransaction> configure) where TTransaction : IDbTransaction
-        //{
-        //    var transaction = @this.Find<TTransaction>();
+        /// <summary>
+        /// Casts the current transaction to the specified type and performs the given action.
+        /// </summary>
+        /// <typeparam name="TTransaction">The type to cast the transaction to.</typeparam>
+        /// <param name="this">The current transaction.</param>
+        /// <param name="action">The action to perform on the casted transaction.</param>
+        /// <exception cref="InvalidCastException">Thrown if the transaction is not of the specified type.</exception>
+        public static void Cast<TTransaction>(this IDbTransaction @this, Action<TTransaction> action) where TTransaction : IDbTransaction
+        {
+            var transaction = @this.Find<TTransaction>();
 
-        //    if (transaction == null) { throw new InvalidOperationException($"The transaction is not of type {typeof(TTransaction).Name}."); }
+            if (transaction == null) { throw new InvalidCastException($"The transaction is not of type {typeof(TTransaction).Name}."); }
 
-        //    configure(transaction);
-        //}
+            action(transaction);
+        }
+
+        /// <summary>
+        /// Casts the current transaction to the specified type and executes the given function.
+        /// </summary>
+        /// <typeparam name="TTransaction">The type to cast the transaction to.</typeparam>
+        /// <typeparam name="TResult">The return type of the function.</typeparam>
+        /// <param name="this">The current transaction.</param>
+        /// <param name="func">The function to execute on the casted transaction.</param>
+        /// <returns>The result of the function.</returns>
+        /// <exception cref="InvalidCastException">Thrown if the transaction is not of the specified type.</exception>
+        public static TResult Cast<TTransaction, TResult>(this IDbTransaction @this, Func<TTransaction, TResult> func) where TTransaction : IDbTransaction
+        {
+            var transaction = @this.Find<TTransaction>();
+
+            if (transaction == null) { throw new InvalidCastException($"The transaction is not of type {typeof(TTransaction).Name}."); }
+
+            return func(transaction);
+        }
 
         /// <summary>
         /// Finds the transaction of the specified type.
@@ -101,7 +119,7 @@ namespace mxProject.Data.Extensions
                 return transaction;
             }
 
-            if (@this is Wrappers.DbTransactionWithFilter wrapper)
+            if (@this is IDbTransactionWrapper wrapper)
             {
                 return wrapper.WrappedTransaction.Find<TTransaction>();
             }

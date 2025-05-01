@@ -368,40 +368,58 @@ namespace mxProject.Data.Extensions
 
         #endregion
 
-        #region Configure
-
-        ///// <summary>
-        ///// Configures the paramter collection by applying the specified action.
-        ///// </summary>
-        ///// <typeparam name="TParameters">The type of the paramter collection.</typeparam>
-        ///// <param name="this">The database paramter collection.</param>
-        ///// <param name="configure">The action to apply to the paramter collection.</param>
-        ///// <exception cref="InvalidOperationException">Thrown if the paramter collection is not of the specified type.</exception>
-        //public static void Configure<TParameters>(this IDataParameterCollection @this, Action<TParameters> configure) where TParameters : IDataParameterCollection
-        //{
-        //    var paramters = @this.Find<TParameters>();
-
-        //    if (paramters == null) { throw new InvalidOperationException($"The paramter collection is not of type {typeof(TParameters).Name}."); }
-
-        //    configure(paramters);
-        //}
+        #region Cast
 
         /// <summary>
-        /// Finds the paramter collection of the specified type.
+        /// Casts the parameter to the specified type and performs the specified action.
         /// </summary>
-        /// <typeparam name="TParameters">The type of the paramter collection to find.</typeparam>
-        /// <param name="this">The database paramter collection.</param>
-        /// <returns>The paramter collection of the specified type, or <c>null</c> if not found.</returns>
-        private static TParameters? Find<TParameters>(this IDataParameterCollection @this) where TParameters : IDataParameterCollection
+        /// <typeparam name="TParameter">The type to cast the parameter to.</typeparam>
+        /// <param name="this">The parameter to cast.</param>
+        /// <param name="action">The action to perform on the casted parameter.</param>
+        /// <exception cref="InvalidCastException">Thrown if the parameter is not of the specified type.</exception>
+        public static void Cast<TParameter>(this IDbDataParameter @this, Action<TParameter> action) where TParameter : IDbDataParameter
         {
-            if (@this is TParameters paramters)
+            var paramters = @this.Find<TParameter>();
+
+            if (paramters == null) { throw new InvalidCastException($"The paramter is not of type {typeof(TParameter).Name}."); }
+
+            action(paramters);
+        }
+
+        /// <summary>
+        /// Casts the parameter to the specified type and returns the result of the specified function.
+        /// </summary>
+        /// <typeparam name="TParameter">The type to cast the parameter to.</typeparam>
+        /// <typeparam name="TResult">The type of the result returned by the function.</typeparam>
+        /// <param name="this">The parameter to cast.</param>
+        /// <param name="func">The function to execute on the casted parameter.</param>
+        /// <returns>The result of the function.</returns>
+        /// <exception cref="InvalidCastException">Thrown if the parameter is not of the specified type.</exception>
+        public static TResult Cast<TParameter, TResult>(this IDbDataParameter @this, Func<TParameter, TResult> func) where TParameter : IDbDataParameter
+        {
+            var paramters = @this.Find<TParameter>();
+
+            if (paramters == null) { throw new InvalidCastException($"The paramter is not of type {typeof(TParameter).Name}."); }
+
+            return func(paramters);
+        }
+
+        /// <summary>
+        /// Attempts to find the parameter as the specified type.
+        /// </summary>
+        /// <typeparam name="TParameter">The type to find the parameter as.</typeparam>
+        /// <param name="this">The parameter to find.</param>
+        /// <returns>The parameter casted to the specified type, or <c>null</c> if the cast is not possible.</returns>
+        private static TParameter? Find<TParameter>(this IDbDataParameter @this) where TParameter : IDbDataParameter
+        {
+            if (@this is TParameter paramters)
             {
                 return paramters;
             }
 
-            if (@this is Wrappers.DataParameterCollectionWithFilter wrapper)
+            if (@this is IDbDataParameterWrapper wrapper)
             {
-                return wrapper.Find<TParameters>();
+                return wrapper.WrappedParameter.Find<TParameter>();
             }
 
             return default;

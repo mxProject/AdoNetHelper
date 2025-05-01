@@ -10,7 +10,7 @@ namespace mxProject.Data.Wrappers
     /// <summary>  
     /// Represents a database command with filters applied to its operations.  
     /// </summary>  
-    internal sealed class DbCommandWithFilter : IDbCommand
+    internal sealed class DbCommandWithFilter : IDbCommand, IDbCommandWrapper
     {
         /// <summary>  
         /// Initializes a new instance of the <see cref="DbCommandWithFilter"/> class.  
@@ -53,6 +53,8 @@ namespace mxProject.Data.Wrappers
         /// Gets the underlying database command.  
         /// </summary>  
         internal IDbCommand WrappedCommand { get; }
+
+        IDbCommand IDbCommandWrapper.WrappedCommand => WrappedCommand;
 
         #endregion
 

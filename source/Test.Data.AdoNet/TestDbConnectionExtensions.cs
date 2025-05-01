@@ -98,18 +98,18 @@ namespace Test.Data.AdoNet
 
         #endregion
 
-        #region Configure
+        #region Cast
 
         [Fact]
-        public void Configure()
+        public void Cast()
         {
             using var connection = SampleDatabase.CreateConnection();
 
-            connection.Configure<SqlConnection>(x => x.Credential = null);
+            connection.Cast<SqlConnection>(x => x.Credential = null);
 
             var wrapper = connection.WithFilter();
 
-            wrapper.Configure<SqlConnection>(x => x.Credential = null);
+            wrapper.Cast<SqlConnection>(x => x.Credential = null);
         }
 
         #endregion

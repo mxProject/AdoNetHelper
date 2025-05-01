@@ -66,7 +66,7 @@ namespace Test.Data.AdoNet
             DbType expectedDbType = DbType.Boolean;
 
             var (index, parameter) = command.AddBooleanParameter("param1", expectedValue);
-
+            
             Assert.Equal(0, index);
             Assert.Equal("param1", parameter.ParameterName);
             Assert.Equal(expectedValue, parameter.Value);
@@ -877,23 +877,31 @@ namespace Test.Data.AdoNet
 
         #endregion
 
-        #region Configure
+        #region Cast
 
         [Fact]
-        public void Configure()
+        public void Cast()
         {
             using var connection = SampleDatabase.CreateConnection();
 
             using (var command = connection.CreateCommand())
             {
-                command.Configure<SqlCommand>(x => x.CommandTimeout = 10);
+                command.Cast<SqlCommand>(x => x.EnableOptimizedParameterBinding = true);
+
+                var enable = command.Cast<SqlCommand, bool>(x => x.EnableOptimizedParameterBinding);
+
+                Assert.True(enable);
             }
 
             var wrapper = connection.WithFilter();
 
             using (var command = wrapper.CreateCommand())
             {
-                command.Configure<SqlCommand>(x => x.CommandTimeout = 10);
+                command.Cast<SqlCommand>(x => x.EnableOptimizedParameterBinding = false);
+
+                var enable = command.Cast<SqlCommand, bool>(x => x.EnableOptimizedParameterBinding);
+
+                Assert.False(enable);
             }
         }
 

@@ -9,7 +9,7 @@ namespace mxProject.Data.Wrappers
     /// <summary>
     /// Represents a database connection with filters applied to its operations.
     /// </summary>
-    internal sealed class DbConnectionWithFilter : IDbConnection
+    internal sealed class DbConnectionWithFilter : IDbConnection, IDbConnectionWrapper
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DbConnectionWithFilter"/> class.
@@ -44,6 +44,8 @@ namespace mxProject.Data.Wrappers
         /// Gets the underlying database connection.
         /// </summary>
         internal IDbConnection WrappedConnection { get; }
+
+        IDbConnection IDbConnectionWrapper.WrappedConnection => WrappedConnection;
 
         #endregion
 

@@ -1037,7 +1037,7 @@ namespace mxProject.Data.Extensions
         /// <param name="this">The <see cref="IDbCommand"/> containing the parameter.</param>
         /// <param name="index">The index of the parameter.</param>
         /// <param name="value">The character value to set. If <c>null</c>, the parameter is set to <c>null</c>.</param>
-        public static void SetStringParameterValue(this IDbCommand @this, int index, char? value)
+        public static void SetCharParameterValue(this IDbCommand @this, int index, char? value)
         {
             SetParameterValue(@this, index, value.HasValue ? value.Value : null);
         }
@@ -1099,22 +1099,40 @@ namespace mxProject.Data.Extensions
 
         #endregion
 
-        #region Configure
+        #region Cast
 
         /// <summary>
-        /// Configures the command by applying the specified action.
+        /// Casts the current <see cref="IDbCommand"/> to the specified type and performs the given action.
         /// </summary>
-        /// <typeparam name="TCommand">The type of the command.</typeparam>
-        /// <param name="this">The database command.</param>
-        /// <param name="configure">The action to apply to the command.</param>
-        /// <exception cref="InvalidOperationException">Thrown if the command is not of the specified type.</exception>
-        public static void Configure<TCommand>(this IDbCommand @this, Action<TCommand> configure) where TCommand : IDbCommand
+        /// <typeparam name="TCommand">The type to cast the command to.</typeparam>
+        /// <param name="this">The current <see cref="IDbCommand"/> instance.</param>
+        /// <param name="action">The action to perform on the casted command.</param>
+        /// <exception cref="InvalidCastException">Thrown if the command is not of the specified type.</exception>
+        public static void Cast<TCommand>(this IDbCommand @this, Action<TCommand> action) where TCommand : IDbCommand
         {
             var command = @this.Find<TCommand>();
 
-            if (command == null) { throw new InvalidOperationException($"The command is not of type {typeof(TCommand).Name}."); }
+            if (command == null) { throw new InvalidCastException($"The command is not of type {typeof(TCommand).Name}."); }
 
-            configure(command);
+            action(command);
+        }
+
+        /// <summary>
+        /// Casts the current <see cref="IDbCommand"/> to the specified type and executes the given function.
+        /// </summary>
+        /// <typeparam name="TCommand">The type to cast the command to.</typeparam>
+        /// <typeparam name="TResult">The return type of the function.</typeparam>
+        /// <param name="this">The current <see cref="IDbCommand"/> instance.</param>
+        /// <param name="func">The function to execute on the casted command.</param>
+        /// <returns>The result of the function.</returns>
+        /// <exception cref="InvalidCastException">Thrown if the command is not of the specified type.</exception>
+        public static TResult Cast<TCommand, TResult>(this IDbCommand @this, Func<TCommand, TResult> func) where TCommand : IDbCommand
+        {
+            var command = @this.Find<TCommand>();
+
+            if (command == null) { throw new InvalidCastException($"The command is not of type {typeof(TCommand).Name}."); }
+
+            return func(command);
         }
 
         /// <summary>

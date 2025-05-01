@@ -10,7 +10,7 @@ namespace mxProject.Data.Wrappers
     /// <summary>  
     /// Represents a wrapper for <see cref="IDataParameterCollection"/> that applies filters to its operations.  
     /// </summary>  
-    internal sealed class DataParameterCollectionWithFilter : IDataParameterCollection
+    internal sealed class DataParameterCollectionWithFilter : IDataParameterCollection, IDataParameterCollectionWrapper
     {
         /// <summary>  
         /// Initializes a new instance of the <see cref="DataParameterCollectionWithFilter"/> class.  
@@ -29,6 +29,8 @@ namespace mxProject.Data.Wrappers
         /// Gets the wrapped parameter collection.  
         /// </summary>  
         internal IDataParameterCollection WrappedParameters { get; }
+
+        IDataParameterCollection IDataParameterCollectionWrapper.WrappedCollection => WrappedParameters;
 
         #endregion
 
