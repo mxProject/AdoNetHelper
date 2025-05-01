@@ -6,7 +6,7 @@ using mxProject.Data.Filters;
 
 namespace mxProject.Data.Wrappers
 {
-    internal sealed class DataReaderWithFilter : IDataReader
+    internal sealed class DataReaderWithFilter : IDataReader, IDataReaderWrapper
     {
         internal DataReaderWithFilter(IDataReader reeader, DbFilterSet<DataReaderFilterTargets, IDataReaderFilter> filters)
         {
@@ -18,6 +18,8 @@ namespace mxProject.Data.Wrappers
         #region reader
 
         internal IDataReader WrappedDataReader { get; }
+
+        IDataReader IDataReaderWrapper.WrappedReader => WrappedDataReader;
 
         #endregion
 

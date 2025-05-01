@@ -105,23 +105,41 @@ namespace mxProject.Data.Extensions
 
         #endregion
 
-        #region Configure
+        #region Cast
 
-        ///// <summary>
-        ///// Configures the datareader by applying the specified action.
-        ///// </summary>
-        ///// <typeparam name="TReader">The type of the datareader.</typeparam>
-        ///// <param name="this">The database datareader.</param>
-        ///// <param name="configure">The action to apply to the datareader.</param>
-        ///// <exception cref="InvalidOperationException">Thrown if the datareader is not of the specified type.</exception>
-        //public static void Configure<TReader>(this IDataReader @this, Action<TReader> configure) where TReader : IDataReader
-        //{
-        //    var reader = @this.Find<TReader>();
+        /// <summary>
+        /// Casts the current <see cref="IDataReader"/> to the specified type and performs the given action.
+        /// </summary>
+        /// <typeparam name="TReader">The type to cast the <see cref="IDataReader"/> to.</typeparam>
+        /// <param name="this">The <see cref="IDataReader"/> instance.</param>
+        /// <param name="action">The action to perform on the casted <see cref="IDataReader"/>.</param>
+        /// <exception cref="InvalidOperationException">Thrown if the <see cref="IDataReader"/> cannot be cast to the specified type.</exception>
+        public static void Cast<TReader>(this IDataReader @this, Action<TReader> action) where TReader : IDataReader
+        {
+            var reader = @this.Find<TReader>();
 
-        //    if (reader == null) { throw new InvalidOperationException($"The datareader is not of type {typeof(TReader).Name}."); }
+            if (reader == null) { throw new InvalidOperationException($"The datareader is not of type {typeof(TReader).Name}."); }
 
-        //    configure(reader);
-        //}
+            action(reader);
+        }
+
+        /// <summary>
+        /// Casts the current <see cref="IDataReader"/> to the specified type and executes the given function.
+        /// </summary>
+        /// <typeparam name="TReader">The type to cast the <see cref="IDataReader"/> to.</typeparam>
+        /// <typeparam name="TResult">The type of the result returned by the function.</typeparam>
+        /// <param name="this">The <see cref="IDataReader"/> instance.</param>
+        /// <param name="func">The function to execute on the casted <see cref="IDataReader"/>.</param>
+        /// <returns>The result of the function.</returns>
+        /// <exception cref="InvalidOperationException">Thrown if the <see cref="IDataReader"/> cannot be cast to the specified type.</exception>
+        public static TResult Cast<TReader, TResult>(this IDataReader @this, Func<TReader, TResult> func) where TReader : IDataReader
+        {
+            var reader = @this.Find<TReader>();
+
+            if (reader == null) { throw new InvalidOperationException($"The datareader is not of type {typeof(TReader).Name}."); }
+
+            return func(reader);
+        }
 
         /// <summary>
         /// Finds the datareader of the specified type.
@@ -136,9 +154,9 @@ namespace mxProject.Data.Extensions
                 return reader;
             }
 
-            if (@this is Wrappers.DataReaderWithFilter wrapper)
+            if (@this is IDataReaderWrapper wrapper)
             {
-                return wrapper.WrappedDataReader.Find<TReader>();
+                return wrapper.WrappedReader.Find<TReader>();
             }
 
             return default;

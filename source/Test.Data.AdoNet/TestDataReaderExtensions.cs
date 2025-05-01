@@ -12,15 +12,15 @@ using Xunit.Abstractions;
 namespace Test.Data.AdoNet
 {
     /// <summary>  
-    /// Test class for IDataParameterCollection extensions.  
+    /// Test class for IDataReader extensions.  
     /// </summary>  
-    public class TestDataParameterCollectionExtensions
+    public class TestDataReaderExtensions
     {
         /// <summary>
         /// Creates a new instance.
         /// </summary>
         /// <param name="output"></param>
-        public TestDataParameterCollectionExtensions(ITestOutputHelper output)
+        public TestDataReaderExtensions(ITestOutputHelper output)
         {
             m_Output = output;
         }
@@ -32,26 +32,34 @@ namespace Test.Data.AdoNet
         {
             using var connection = SampleDatabase.CreateConnection();
 
+            connection.Open();
+
             using (var command = connection.CreateCommand())
             {
-                command.Parameters.Cast<SqlParameterCollection>(x =>
-                {
-                    x.AddWithValue("id", 1);
-                });
+                command.CommandText = "select 1 as ID, 'abc' as NAME";
 
-                Assert.Single(command.Parameters);   
+                using var reader = command.ExecuteReader();
+
+                reader.Cast<SqlDataReader>(x =>
+                {
+                    x.Read();
+                    Assert.Equal(1, x.GetInt32(0));
+                    Assert.Equal("abc", x.GetString(1));
+                });
             }
 
             var wrapper = connection.WithFilter();
 
             using (var command = wrapper.CreateCommand())
             {
-                command.Parameters.Cast<SqlParameterCollection>(x =>
-                {
-                    x.AddWithValue("id", 1);
-                });
+                command.CommandText = "select 1 as ID, 'abc' as NAME";
 
-                Assert.Single(command.Parameters);
+                using var reader = command.ExecuteReader();
+
+                reader.Cast<SqlDataReader>(x =>
+                {
+                    var idType = x.GetProviderSpecificFieldType(0);
+                });
             }
         }
     }
