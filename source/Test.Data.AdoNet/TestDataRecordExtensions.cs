@@ -884,6 +884,12 @@ namespace Test.Data.AdoNet
                     Assert.Equal(value, reader.GetStringOrNull("field1"));
                     Assert.Equal(value, (await reader.GetStringOrNullAsync("field1")));
 
+                    Assert.Equal(value, reader.GetStringOrEmpty(0));
+                    Assert.Equal(value, (await reader.GetStringOrEmptyAsync(0)));
+
+                    Assert.Equal(value, reader.GetStringOrEmpty("field1"));
+                    Assert.Equal(value, (await reader.GetStringOrEmptyAsync("field1")));
+
                     Assert.True(reader.IsDBNull(1));
                     Assert.True(reader.IsDBNull("field2"));
 
@@ -895,6 +901,12 @@ namespace Test.Data.AdoNet
 
                     Assert.Null(reader.GetStringOrNull("field2"));
                     Assert.Null((await reader.GetStringOrNullAsync("field2")));
+
+                    Assert.Empty(reader.GetStringOrEmpty(1));
+                    Assert.Empty((await reader.GetStringOrEmptyAsync(1)));
+
+                    Assert.Empty(reader.GetStringOrEmpty("field2"));
+                    Assert.Empty((await reader.GetStringOrEmptyAsync("field2")));
                 }
             }
 

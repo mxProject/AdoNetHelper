@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Data;
 using System.Net.Http.Headers;
+using System.Xml.Linq;
 
 namespace mxProject.Data.Extensions
 {
@@ -1635,6 +1636,29 @@ namespace mxProject.Data.Extensions
         }
 
         /// <summary>
+        /// Gets the value of the specified column as a string, or an empty string if the column is <see cref="DBNull"/>.
+        /// </summary>
+        /// <param name="this">The data record.</param>
+        /// <param name="ordinal">The zero-based column ordinal.</param>
+        /// <returns>The value of the column as a string, or an empty string.</returns>
+        public static string GetStringOrEmpty(this IDataRecord @this, int ordinal)
+        {
+            if (@this.IsDBNull(ordinal)) { return string.Empty; }
+            return @this.GetString(ordinal) ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Gets the value of the specified column as a string, or an empty string if the column is <see cref="DBNull"/>.
+        /// </summary>
+        /// <param name="this">The data record.</param>
+        /// <param name="name">The name of the column.</param>
+        /// <returns>The value of the column as a string, or an empty string.</returns>
+        public static string GetStringOrEmpty(this IDataRecord @this, string name)
+        {
+            return @this.GetStringOrEmpty(GetAndAssertOrdinal(@this, name));
+        }
+
+        /// <summary>
         /// Gets the value of the specified column as a char, or the default value if the column is <see cref="DBNull"/>.
         /// </summary>
         /// <param name="this">The data record.</param>
@@ -1968,6 +1992,38 @@ namespace mxProject.Data.Extensions
             return AsyncUtility.FuncAsyncAsValueTask(
                 (@this, name),
                 s => s.@this.GetDateTimeOrDefault(s.name),
+                cancellationToken
+                );
+        }
+
+        /// <summary>
+        /// Asynchronously gets the value of the specified column as a string, or an empty string if the column is <see cref="DBNull"/>.
+        /// </summary>
+        /// <param name="this">The data record.</param>
+        /// <param name="ordinal">The zero-based column ordinal.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+        /// <returns>The value of the column as a string, or an empty string.</returns>
+        public static ValueTask<string> GetStringOrEmptyAsync(this IDataRecord @this, int ordinal, CancellationToken cancellationToken = default)
+        {
+            return AsyncUtility.FuncAsyncAsValueTask(
+                (@this, ordinal),
+                s => s.@this.GetStringOrEmpty(s.ordinal),
+                cancellationToken
+                );
+        }
+
+        /// <summary>
+        /// Asynchronously gets the value of the specified column as a string, or an empty string if the column is <see cref="DBNull"/>.
+        /// </summary>
+        /// <param name="this">The data record.</param>
+        /// <param name="name">The name of the column.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+        /// <returns>The value of the column as a string, or an empty string.</returns>
+        public static ValueTask<string> GetStringOrEmptyAsync(this IDataRecord @this, string name, CancellationToken cancellationToken = default)
+        {
+            return AsyncUtility.FuncAsyncAsValueTask(
+                (@this, name),
+                s => s.@this.GetStringOrEmpty(s.name),
                 cancellationToken
                 );
         }
