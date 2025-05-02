@@ -176,7 +176,7 @@ namespace Test.Data.AdoNet
         /// <returns>An enumerable of test data.</returns>  
         public static IEnumerable<object[]> WithFilterArguments()
         {
-            int maxFilterCount = 3;
+            int maxFilterCount = 9;
 
             foreach (var target in Enum.GetValues<DbConnectionFilterTargets>())
             {
