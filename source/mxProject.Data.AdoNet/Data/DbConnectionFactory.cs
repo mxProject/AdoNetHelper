@@ -8,7 +8,7 @@ namespace mxProject.Data
     /// <summary>  
     /// Factory class for creating database connections with optional filters.  
     /// </summary>  
-    public class DbConnectionFactory
+    public class DbConnectionFactory : IDbConnectionFactory
     {
         /// <summary>  
         /// Initializes a new instance of the <see cref="DbConnectionFactory"/> class.  
@@ -63,6 +63,10 @@ namespace mxProject.Data
             );
         }
 
+        /// <summary>
+        /// Determines whether the connection needs to be wrapped with filters.
+        /// </summary>
+        /// <returns><c>true</c> if wrapping is needed; otherwise, <c>false</c>.</returns>
         private bool NeedWrap()
         {
             if (m_ConnectionFilters != null && m_ConnectionFilters.Targets != DbConnectionFilterTargets.None) { return true; }
