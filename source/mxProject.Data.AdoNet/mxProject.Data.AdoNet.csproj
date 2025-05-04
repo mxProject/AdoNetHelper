@@ -19,4 +19,9 @@
     <PackageReleaseNotes>Added a constructor to the DbCommandExecutor class that accepts a method to configure a command.</PackageReleaseNotes>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.4" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
+  </ItemGroup>
+
 </Project>
