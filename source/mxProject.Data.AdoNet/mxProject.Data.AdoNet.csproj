@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <RootNamespace>mxProject</RootNamespace>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>0.1.1</Version>
+    <Version>0.2.0</Version>
     <Authors>mxProject</Authors>
     <Description>ADO.NET Helper Library.</Description>
     <Copyright>Copyright (c) mxProject 2025</Copyright>
@@ -16,7 +16,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Title></Title>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageReleaseNotes>Added a constructor to the DbCommandExecutor class that accepts a method to configure a command.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added extension methods for IDbConnection, IDbTransaction, IDbCommand, IDataParameterCollection, and IDataReader.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
